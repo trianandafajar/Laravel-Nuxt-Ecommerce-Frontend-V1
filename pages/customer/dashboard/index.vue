@@ -1,134 +1,125 @@
 <template>
   <div class="container-fluid mt-custom">
     <div class="fade-in">
-    <div class="row">
-      <div class="col-md-3">
-        <!-- sidebar -->
-        <Sidebar />
-        <!-- end sidebar -->
-      </div>
-      <div class="col-md-9">
-        <div class="card border-0 rounded shadow-sm border-top-orange">
-          <div class="card-body">
-            <h5><i class="fa fa-tachometer-alt"></i> DASHBOARD</h5>
-            <hr>
+      <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+          <Sidebar />
+        </div>
 
-            <div class="row">
-              <div class="col-md-12">
-                <div class="alert alert-success" role="alert">
-                  Selamat Datang Paduka <strong>{{ $auth.user.name }}</strong>
-                </div>
-              </div>
-            </div>
+        <!-- Main Content -->
+        <div class="col-md-9">
+          <div class="card border-0 rounded shadow-sm border-top-orange">
+            <div class="card-body">
+              <h5>
+                <i class="fa fa-tachometer-alt"></i> DASHBOARD
+              </h5>
+              <hr />
 
-            <div class="row">
-
-              <div class="col-6 col-lg-3">
-                <div class="card rounded shadow-sm overflow-hidden">
-                  <div class="card-body p-0 d-flex align-items-center">
-                    <div class="bg-primary py-4 px-5 mfe-3">
-                      <i class="fas fa-circle-notch fa-spin fa-2x"></i>
-                    </div>
-                    <div>
-                      <div class="text-value text-primary">{{ pending }}</div>
-                      <div class="text-muted text-uppercase font-weight-bold small">PENDING</div>
-                    </div>
-                  </div>
-                </div>
+              <!-- Welcome Alert -->
+              <div class="alert alert-success" role="alert">
+                Selamat Datang Paduka <strong>{{ $auth.user.name }}</strong>
               </div>
 
-              <div class="col-6 col-lg-3">
-                <div class="card rounded shadow-sm overflow-hidden">
-                  <div class="card-body p-0 d-flex align-items-center">
-                    <div class="bg-success py-4 px-5 mfe-3">
-                      <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
-                    <div>
-                      <div class="text-value text-success">{{ success }}</div>
-                      <div class="text-muted text-uppercase font-weight-bold small">SUCCESS</div>
-                    </div>
-                  </div>
-                </div>
+              <!-- Statistik Boxes -->
+              <div class="row">
+                <StatBox
+                  color="primary"
+                  icon="fa-circle-notch fa-spin"
+                  label="PENDING"
+                  :value="pending"
+                />
+                <StatBox
+                  color="success"
+                  icon="fa-check-circle"
+                  label="SUCCESS"
+                  :value="success"
+                />
+                <StatBox
+                  color="warning"
+                  icon="fa-exclamation-triangle"
+                  label="EXPIRED"
+                  :value="expired"
+                />
+                <StatBox
+                  color="danger"
+                  icon="fa-times-circle"
+                  label="FAILED"
+                  :value="failed"
+                />
               </div>
-
-              <div class="col-6 col-lg-3">
-                <div class="card rounded shadow-sm overflow-hidden">
-                  <div class="card-body p-0 d-flex align-items-center">
-                    <div class="bg-warning py-4 px-5 mfe-3">
-                      <i class="fas fa-exclamation-triangle fa-2x"></i>
-                    </div>
-                    <div>
-                      <div class="text-value text-warning">{{ expired }}</div>
-                      <div class="text-muted text-uppercase font-weight-bold small">EXPIRED</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-6 col-lg-3">
-                <div class="card rounded shadow-sm overflow-hidden">
-                  <div class="card-body p-0 d-flex align-items-center">
-                    <div class="bg-danger py-4 px-5 mfe-3">
-                      <i class="fas fa-times-circle fa-2x"></i>
-                    </div>
-                    <div>
-                      <div class="text-value text-danger">{{ failed }}</div>
-                      <div class="text-muted text-uppercase font-weight-bold small">FAILED</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
           </div>
         </div>
       </div>
     </div>
-    </div>
   </div>
 </template>
 
 <script>
-  //import sidebar
-  import Sidebar from '@/components/web/sidebar.vue'
+// Import Sidebar
+import Sidebar from "@/components/web/sidebar.vue";
 
-  export default {
+// Statistik Box Component (opsional agar DRY)
+const StatBox = {
+  props: ["color", "icon", "label", "value"],
+  template: `
+    <div class="col-6 col-lg-3 mb-3">
+      <div class="card rounded shadow-sm overflow-hidden">
+        <div class="card-body p-0 d-flex align-items-center">
+          <div :class="'bg-' + color + ' py-4 px-5 mfe-3'">
+            <i :class="'fas ' + icon + ' fa-2x'"></i>
+          </div>
+          <div>
+            <div :class="'text-value text-' + color">{{ value }}</div>
+            <div class="text-muted text-uppercase font-weight-bold small">
+              {{ label }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+};
 
-    //middleware
-    middleware: 'isCustomer',
+export default {
+  layout: "default",
+  middleware: "isCustomer",
 
-    //layout
-    layout: 'default',
+  components: {
+    Sidebar,
+    StatBox,
+  },
 
-    //register components
-    components: {
-      Sidebar
-    },
+  head() {
+    return {
+      title: "Dashboard - Customer",
+    };
+  },
 
-    //meta
-    head() {
+  async asyncData({ $axios, error }) {
+    try {
+      const dashboard = await $axios.$get("/api/customer/dashboard");
+
       return {
-        title: 'Dashboard - Customer',
-      }
-    },
-
-    async asyncData({ $axios }) {
-
-      //fetching dashboard
-      const dashboard = await $axios.$get('/api/customer/dashboard')
-
+        pending: dashboard.data.count.pending,
+        success: dashboard.data.count.success,
+        expired: dashboard.data.count.expired,
+        failed: dashboard.data.count.failed,
+      };
+    } catch (err) {
+      // Optional error handler / default value
       return {
-        //count statistik
-        'pending': dashboard.data.count.pending,
-        'success': dashboard.data.count.success,
-        'expired': dashboard.data.count.expired,
-        'failed': dashboard.data.count.failed,
-      }
-    },
-
-  }
+        pending: 0,
+        success: 0,
+        expired: 0,
+        failed: 0,
+      };
+    }
+  },
+};
 </script>
 
-<style>
-
+<style scoped>
+/* Add any needed styling here */
 </style>
