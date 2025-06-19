@@ -5,19 +5,12 @@
         <div class="row align-items-center">
           <div class="col-lg-3 col-sm-4 col-md-4 col-5"> 
               <nuxt-link to="/" class="brand-wrap" data-abc="true">
-                <img src="/images/xiaomi.png" width="35" class="bg-light p-2 rounded">
+                <img src="/images/xiaomi.png" width="35" class="bg-light p-2 rounded" loading="lazy">
                 <span class="logo">MI STORE</span>
               </nuxt-link>
           </div>
           <div class="col-lg-4 col-xl-5 col-sm-8 col-md-4 d-none d-md-block">
-            <div class="search-wrap">
-              <div class="input-group w-100"> 
-                <input type="text" class="form-control search-form" v-model="search" @keypress.enter="searchData" style="width:55%;" placeholder="mau belanja apa hari ini ?">
-                <div class="input-group-append"> 
-                  <button @click="searchData" class="btn btn-primary search-button"> <i class="fa fa-search"></i> </button> 
-                </div>
-              </div>
-            </div>
+            <SearchInput v-model="search" @search="searchData" />
           </div>
           <div class="col-lg-5 col-xl-4 col-sm-8 col-md-4 col-7">
             <div class="d-flex justify-content-end">
@@ -30,12 +23,7 @@
     <nav class="navbar navbar-expand-md navbar-main border-bottom p-2">
       <div class="container-fluid">
         <div class="d-md-none my-2">
-          <div class="input-group"> 
-            <input type="search" name="search" class="form-control" v-model="search" @keypress.enter="searchData" placeholder="mau belanja apa hari ini ?">
-            <div class="input-group-append"> 
-              <button @click="searchData" class="btn btn-warning"> <i class="fa fa-search"></i></button> 
-            </div>
-          </div>
+          <SearchInput v-model="search" @search="searchData" mobile />
         </div> 
         <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#dropdown6"
           aria-expanded="false"> <span class="navbar-toggler-icon"></span> </button>
@@ -45,7 +33,7 @@
                 data-abc="true" aria-expanded="false"><i class="fa fa-list-ul"></i> KATEGORI</a>
               <div class="dropdown-menu">
                 <nuxt-link :to="{name: 'categories-slug', params: {slug: category.slug}}" class="dropdown-item" v-for="category in categories" :key="category.id">
-                  <img :src="category.image" width="50"> {{ category.name }}
+                  <img :src="category.image" width="50" loading="lazy"> {{ category.name }}
                 </nuxt-link>
                 <div class="dropdown-divider"></div>
                 <nuxt-link :to="{name: 'categories'}" class="dropdown-item active text-center" href="" data-abc="true">
@@ -74,52 +62,32 @@
 </template>
 
 <script>
+import SearchInput from '@/components/web/SearchInput.vue'
   export default {
-
-    //hook "fetch"
+    components: { SearchInput },
     async fetch() {
-
-      //fething sliders on Rest API
       await this.$store.dispatch('web/category/getCategoriesData')
-
-      if(this.$auth.loggedIn && this.$auth.strategy.name == 'customer') {
-
-        //fething carts on Rest API
+      if(this.$auth.loggedIn && this.$auth.strategy && this.$auth.strategy.name == 'customer') {
         await this.$store.dispatch('web/cart/getCartsData')
         await this.$store.dispatch('web/cart/getCartPrice')
-
       }
     },
-
-    //computed
     computed: {
-        
-      //categories
       categories() {
         return this.$store.state.web.category.categories
       },
-
-      //cartPrice
       cartPrice() {
         return this.$store.state.web.cart.cartPrice
       },
-
-      //cartTotal
       cartTotal() {
         return this.$store.state.web.cart.carts.length
       },
     },
-
-    //data function
     data() {
       return {
-
-        //state search
         search: ''
       }
     },
-
-    //method
     methods: {
       searchData() {
         this.$router.push({
@@ -128,14 +96,20 @@
             q: this.search
           }
         });
+      },
+      formatPrice(value) {
+        if (!value) return '0';
+        return value.toLocaleString('id-ID');
       }
     }
-
   }
 </script>
 
 <style scoped>
   .btn {
     font-size: initial;
+  }
+  .search-form {
+    width: 55%;
   }
 </style>
