@@ -14,7 +14,7 @@
                   <tr v-for="cart in carts" :key="cart.id" style="background: #edf2f7;">
                     <td class="b-none" width="25%">
                       <div class="wrapper-image-cart">
-                        <img :src="cart.product.image" style="width: 100%;border-radius: .5rem">
+                        <img :src="cart.product.image" class="cart-img" loading="lazy">
                       </div>
                     </td>
                     <td class="b-none" width="50%">
@@ -500,5 +500,10 @@
 
   .table-font {
     font-size: 14px;
+  }
+
+  .cart-img {
+    width: 100%;
+    border-radius: 0.5rem;
   }
 </style>
