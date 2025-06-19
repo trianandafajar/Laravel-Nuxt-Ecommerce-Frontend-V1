@@ -6,7 +6,7 @@
         <div class="col-md-4 mb-4">
           <div class="card border-0 rounded shadow-sm">
             <div class="card-body">
-              <img :src="product.image" class="w-100 rounded">
+              <img :src="product.image" class="w-100 rounded" loading="lazy">
             </div>
           </div>
         </div>
@@ -59,7 +59,7 @@
                   <div class="row">
                     <div class="col-md-1">
                       <div class="review-avatar avatar-sm">
-                        <img :src="`https://ui-avatars.com/api/?name=${review.customer.name}&amp;background=4e73df&amp;color=ffffff&amp;size=100`">
+                        <img :src="`https://ui-avatars.com/api/?name=${review.customer.name}&amp;background=4e73df&amp;color=ffffff&amp;size=100`" loading="lazy">
                       </div>
                     </div>
                     <div class="col-md-11">
@@ -184,6 +184,6 @@
   }
 </script>
 
-<style>
+<style scoped>
 
 </style>
