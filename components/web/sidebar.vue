@@ -13,8 +13,8 @@
             class="fa fa-shopping-cart"></i> My Orders
         </nuxt-link>
 
-        <a @click="logout" class="list-group-item text-decoration-none text-dark text-uppercase"
-          style="cursor: pointer;"><i class="fa fa-sign-out-alt"></i> Logout
+        <a @click="logout" class="list-group-item text-decoration-none text-dark text-uppercase pointer-logout">
+          <i class="fa fa-sign-out-alt"></i> Logout
         </a>
       </ul>
     </div>
@@ -52,5 +52,8 @@
 <style scoped>
   a.nuxt-link-active {
     background: rgba(255, 222, 212, .05) !important;
+  }
+  .pointer-logout {
+    cursor: pointer;
   }
 </style>
