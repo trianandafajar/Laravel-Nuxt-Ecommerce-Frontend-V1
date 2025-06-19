@@ -6,7 +6,7 @@
 
         <div class="carousel-item" v-for="(slider, id) in sliders" :class="{ active: id==0 }" :key='slider.id'>
             <a :href="slider.link" target="_blank">
-                <img :src="slider.image" class="d-block w-100 rounded">
+                <img :src="slider.image" class="d-block w-100 rounded" loading="lazy">
             </a> 
         </div>
 
@@ -45,6 +45,8 @@
   }
 </script>
 
-<style>
-
+<style scoped>
+.mt-custom {
+  margin-top: 1.5rem;
+}
 </style>
