@@ -16,12 +16,12 @@
         <div class="row">
           <div
             class="col-md-3 mt-1 mb-4"
-            v-for="product in products?.data || []"
+            v-for="product in (products && products.data ? products.data : [])"
             :key="product.id"
           >
             <div class="card h-100 border-0 rounded shadow-sm">
               <div class="card-body">
-                <img :src="product.image" class="card-img img-fluid" />
+                <img :src="product.image" class="card-img img-fluid" loading="lazy" />
               </div>
               <div class="card-body bg-light-custom text-center rounded-bottom">
                 <div class="mb-2">
